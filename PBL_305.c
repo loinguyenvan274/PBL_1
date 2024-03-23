@@ -1,17 +1,20 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-int n = 7;
+
 typedef struct lineLinkedList {
     struct lineLinkedList* NSNext;
     struct numbersSeries* numbersList;
 }lineLinkedList;
 typedef struct numbersSeries {
+    unsigned int count;
+    unsigned int* max_sizeList;
     double number;
     struct numbersSeries* NNext;
 }numbersSeries;
 
 void StringToDoubleInStruct(char StringInFile[], lineLinkedList* lineList){
+    //チェックをします
     printf("\nstart\n");
     int  j = 0;
     while(StringInFile[j]!='\0'){
@@ -19,14 +22,21 @@ void StringToDoubleInStruct(char StringInFile[], lineLinkedList* lineList){
         j++;
     }
     printf("\n");
+
+
+    //最前の所
     lineList->numbersList = (numbersSeries*)malloc(sizeof(numbersSeries));
     numbersSeries* tempNumberList = lineList->numbersList;
+    tempNumberList->max_sizeList = (int*)malloc(sizeof(int));
+
     int countC = 0;
     int check = 0;
+
     while(StringInFile[countC]!='\0' && StringInFile[countC] != 10){
         int sign = 1;
         int th_10 = 1;
         double temp = 0.0;
+        int countNumberForNumberList = -1;
         while(StringInFile[countC]!=' ' && StringInFile[countC] !='\0' && StringInFile[countC] != 10){
             temp = (StringInFile[countC] != '-' && StringInFile[countC]!='.') ? temp*10 + ((double)(StringInFile[countC]-'0')) : temp; 
             check = 1;
@@ -44,10 +54,19 @@ void StringToDoubleInStruct(char StringInFile[], lineLinkedList* lineList){
             if(th_10 != 1){
                 temp /=(th_10/10);
             }
+
+            ++countNumberForNumberList;
+            tempNumberList->count = countNumberForNumberList;
             tempNumberList->number = temp;
+
+            //チェック
             printf("%lf  ",temp);
+
+
             tempNumberList->NNext = (numbersSeries*)malloc(sizeof(numbersSeries));
+            tempNumberList->NNext->max_sizeList = tempNumberList->max_sizeList; 
             tempNumberList = tempNumberList->NNext;
+
             sign = 1;
             th_10 = 1;
             temp = 0.0;
@@ -61,6 +80,7 @@ void StringToDoubleInStruct(char StringInFile[], lineLinkedList* lineList){
     }
     free(tempNumberList->NNext);
     tempNumberList->NNext =  NULL;
+    tempNumberList->max_sizeList = tempNumberList->count;
     printf("\nEnd\n");
 }
 void readToFile(lineLinkedList** A){
@@ -95,10 +115,28 @@ void printOneStruct(lineLinkedList* A){
         A = A->NSNext;
     }
 }
+void InsertInListNumber(lineLinkedList** A ){
+    lineLinkedList* B = *A;
+    numbersSeries* tempS;
+    tempS =(*A)->numbersList;
+    int count = 1;
+    while(tempS != NULL){
+        count++;
+        tempS =tempS->NNext;
+    }
+    tempS =(*A)->numbersList;
+    int tempCount = count;
+    while(B != NULL){
+
+        B = B->NSNext;
+    }
+
+}
 int main(){
 
     lineLinkedList* A = NULL ;
     readToFile(&A);
     printOneStruct(A);
+    printf("%u",A->numbersList->max_sizeList);
     
 }
