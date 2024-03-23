@@ -7,36 +7,44 @@ typedef struct lineLinkedList {
     struct numbersSeries* numbersList;
 }lineLinkedList;
 typedef struct numbersSeries {
-    unsigned int count;
     unsigned int* max_sizeList;
     double number;
     struct numbersSeries* NNext;
 }numbersSeries;
+typedef struct fileNumber{
+    double number;
+    struct fileNumber* LNext;
+}fileNumber;
 
 void StringToDoubleInStruct(char StringInFile[], lineLinkedList* lineList){
     //チェックをします
-    printf("\nstart\n");
-    int  j = 0;
-    while(StringInFile[j]!='\0'){
-        printf("%d ",StringInFile[j]);
-        j++;
-    }
-    printf("\n");
+    // printf("\nstart\n");
+    // int  j = 0;
+    // while(StringInFile[j]!='\0'){
+    //     printf("%d ",StringInFile[j]);
+    //     j++;
+    // }
+    // printf("\n");
 
 
     //最前の所
     lineList->numbersList = (numbersSeries*)malloc(sizeof(numbersSeries));
     numbersSeries* tempNumberList = lineList->numbersList;
-    tempNumberList->max_sizeList = (int*)malloc(sizeof(int));
+
+
+    
+
+
+
+    tempNumberList->max_sizeList = (unsigned int*)malloc(sizeof(unsigned int));
 
     int countC = 0;
     int check = 0;
-
+    int countNumberForNumberList = 0;
     while(StringInFile[countC]!='\0' && StringInFile[countC] != 10){
         int sign = 1;
         int th_10 = 1;
         double temp = 0.0;
-        int countNumberForNumberList = -1;
         while(StringInFile[countC]!=' ' && StringInFile[countC] !='\0' && StringInFile[countC] != 10){
             temp = (StringInFile[countC] != '-' && StringInFile[countC]!='.') ? temp*10 + ((double)(StringInFile[countC]-'0')) : temp; 
             check = 1;
@@ -55,12 +63,12 @@ void StringToDoubleInStruct(char StringInFile[], lineLinkedList* lineList){
                 temp /=(th_10/10);
             }
 
-            ++countNumberForNumberList;
-            tempNumberList->count = countNumberForNumberList;
+            countNumberForNumberList++;
+            // printf(" value : %d ",countNumberForNumberList);
             tempNumberList->number = temp;
 
             //チェック
-            printf("%lf  ",temp);
+            // printf("%lf  \n",temp);
 
 
             tempNumberList->NNext = (numbersSeries*)malloc(sizeof(numbersSeries));
@@ -80,17 +88,19 @@ void StringToDoubleInStruct(char StringInFile[], lineLinkedList* lineList){
     }
     free(tempNumberList->NNext);
     tempNumberList->NNext =  NULL;
-    tempNumberList->max_sizeList = tempNumberList->count;
-    printf("\nEnd\n");
+    *(tempNumberList->max_sizeList) = countNumberForNumberList ;
+    // printf(" value Maxsize main : %u",*(tempNumberList->max_sizeList));
+    // printf("\nEnd\n");
 }
 void readToFile(lineLinkedList** A){
+    //check it't has same
+    // printf(" address of lineList = %d ", ((*A)->numbersList));
     
     *A = (lineLinkedList*)malloc(sizeof(lineLinkedList));
-    lineLinkedList* tempS ;
-    tempS = *A;
+    lineLinkedList* tempS = *A;
     FILE *f;
     f = fopen("DAYSO.IN", "r");
-    char temp[20];
+    char temp[50];
     if(f == NULL){
         printf("Cannot open file !\n");
     }
@@ -105,38 +115,103 @@ void readToFile(lineLinkedList** A){
     }
     fclose(f);
 }
-void printOneStruct(lineLinkedList* A){
-    while(A != NULL){
-        while(A->numbersList != NULL){
-            printf("%lf  ",A->numbersList->number);
-            A->numbersList = A->numbersList->NNext;
+void printOneStruct(lineLinkedList** B){
+    lineLinkedList* A = *B;
+    while(A->NSNext != NULL){
+        numbersSeries* tempNumbersList = A->numbersList;
+        while(tempNumbersList != NULL){
+            printf("%lf  max: %u |",tempNumbersList->number ,*(tempNumbersList->max_sizeList));
+            tempNumbersList = tempNumbersList->NNext;
         }
         printf("\n");
         A = A->NSNext;
     }
+    printf("printed to finish");
 }
-void InsertInListNumber(lineLinkedList** A ){
-    lineLinkedList* B = *A;
-    numbersSeries* tempS;
-    tempS =(*A)->numbersList;
-    int count = 1;
-    while(tempS != NULL){
-        count++;
-        tempS =tempS->NNext;
-    }
-    tempS =(*A)->numbersList;
-    int tempCount = count;
-    while(B != NULL){
+void insertToList(numbersSeries** A, numbersSeries** B){
+// 使用前にメモリを割り当てる必要がある
+    (*B)->max_sizeList = (*A)->max_sizeList;
+    (*B)->NNext = (*A)->NNext;
+    (*A)->NNext = (*B);
+    *((*A)->max_sizeList) += 1; 
+}
+void insertPartNumberList(numbersSeries** A, double Fnumber){
+    int i =(int) (*((*A)->max_sizeList)/2);
+    numbersSeries* B = (numbersSeries*)malloc(sizeof(numbersSeries));
+    numbersSeries* tempNumberStruct = *A;
+//    printf("here");
+//    printf("\n%d ",*(tempNumberStruct->max_sizeList));
+   while(--i){
+        tempNumberStruct = tempNumberStruct->NNext;
+   }
 
-        B = B->NSNext;
-    }
 
+   insertToList(&tempNumberStruct,&B);
+   B->number = Fnumber;
+   printf(" number->%lf\n",B->NNext->number);
+   printf(" max when chagned %u\n ",*(tempNumberStruct->max_sizeList));
+
+}
+void insertToAllLine(lineLinkedList** A, fileNumber** J){
+    lineLinkedList* tempLineStruct = *A;
+    fileNumber* tempFNumber = *J;
+    while(tempLineStruct->NSNext != NULL){
+        insertPartNumberList(&(tempLineStruct->numbersList),tempFNumber->number);
+        tempLineStruct = tempLineStruct->NSNext;
+        tempFNumber = tempFNumber->LNext;
+    }
+    printf("end to here");
+}
+double stringtoNumber(char str[]){
+    int i = 0;
+    int sign = 1;
+    int th_10 = 1;
+    double number = 0;
+    while(str[i]!='\0' && str[i] != 10 &&  str[i] != '.'){
+        number = (str[i] != ' ') ? number*10 + (double) (str[i]-'0') : number;
+        ++i;
+    }
+    if(str[i] == '.'){
+        ++i;
+        while(str[i]!='\0' && str[i] != 10){
+            number = (str[i] != ' ') ? number*10 + (double) (str[i]-'0') : number;
+            th_10 *= 10;
+        }
+    }
+    return number*sign/th_10;
+
+}
+void readFAW(fileNumber** j){
+    FILE *f;
+    f = fopen("InNumberEnter.IN","r");
+    if(f == NULL){
+        printf("can not open file InNumberEnter.IN");
+    }
+    else{
+        fileNumber* tempLFileNumber = *j;
+         tempLFileNumber = (fileNumber*)malloc(sizeof(fileNumber));
+        char tempC[50];
+        while(fgets(tempC,sizeof(tempC),f)){
+           
+            tempLFileNumber->LNext = (fileNumber*)malloc(sizeof(fileNumber));
+            tempLFileNumber->number = stringtoNumber(tempC);
+            tempLFileNumber = tempLFileNumber->LNext;
+        }
+        tempLFileNumber->LNext = NULL;
+    }
+    
+    
 }
 int main(){
 
-    lineLinkedList* A = NULL ;
+    lineLinkedList* A;
+    fileNumber* j;
+    readFAW(&j); 
     readToFile(&A);
-    printOneStruct(A);
-    printf("%u",A->numbersList->max_sizeList);
+    insertToAllLine(&A,&j);
+    printf("when changed \n");
+    printOneStruct(&A);
+
+
     
 }
