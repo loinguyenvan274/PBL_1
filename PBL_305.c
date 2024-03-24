@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 
 
 typedef struct lineLinkedList {
@@ -14,6 +15,7 @@ typedef struct numbersSeries {
 }numbersSeries;
 
 int d_fArray(double** array, double number);
+void d_cArray(char** array, char* character);
 void readFAW(double** array);
 void StringToDoubleInStruct(char StringInFile[], lineLinkedList* lineList);
 void readToFile(lineLinkedList** A);
@@ -22,6 +24,7 @@ void insertToList(numbersSeries** A, numbersSeries** B);
 void insertPartNumberList(numbersSeries** A, double Fnumber);
 void insertToAllLine(lineLinkedList** A, double* d_fArray);
 double stringtoNumber(char str[]);
+void writeToFileS(lineLinkedList** B);
 
 int main(){
     double* tempFile ;
@@ -32,7 +35,11 @@ int main(){
     printOneStruct(&A);
     insertToAllLine(&A,tempFile);
 
+    free(tempFile);
+    
+
     printf("\n\n# ---- after changed ----\n\n");
+    writeToFileS(&A);
     printOneStruct(&A);
 
 
@@ -49,6 +56,21 @@ int d_fArray(double** array, double number) {
     count_dArray++;
     return count_dArray - 1;
 }
+void d_cArray(char** array, char* character) {
+    static int count_dArray = 0;
+    int characterLength = strlen(character);
+    if (count_dArray == 0) {
+        count_dArray = characterLength + 1;
+        *array = (char*)malloc(count_dArray * sizeof(char));
+        strcpy(*array, character);
+    } else {
+        int arrayLength = strlen(*array);
+        count_dArray += characterLength;
+        *array = realloc(*array, count_dArray * sizeof(char));
+        memcpy(*array + arrayLength, character, characterLength + 1); 
+    }
+}
+
 void readFAW(double** array){
     int count_number_to_file = 0;
     char temp_c[20];
@@ -60,7 +82,6 @@ void readFAW(double** array){
         while(fgets(temp_c, sizeof(temp_c),f) != NULL){
             double temp_f = stringtoNumber(temp_c);
              d_fArray(array,temp_f); 
-            //  if(count_number_to_file == 10) break;
              count_number_to_file++;
         } 
         fclose(f);
@@ -68,24 +89,9 @@ void readFAW(double** array){
     
 }
 void StringToDoubleInStruct(char StringInFile[], lineLinkedList* lineList){
-    //チェックをします
-    // printf("\nstart\n");
-    // int  j = 0;
-    // while(StringInFile[j]!='\0'){
-    //     printf("%d ",StringInFile[j]);
-    //     j++;
-    // }
-    // printf("\n");
 
-
-    //最前の所
     lineList->numbersList = (numbersSeries*)malloc(sizeof(numbersSeries));
     numbersSeries* tempNumberList = lineList->numbersList;
-
-
-    
-
-
 
     tempNumberList->max_sizeList = (unsigned int*)malloc(sizeof(unsigned int));
 
@@ -115,12 +121,7 @@ void StringToDoubleInStruct(char StringInFile[], lineLinkedList* lineList){
             }
 
             countNumberForNumberList++;
-            // printf(" value : %d ",countNumberForNumberList);
             tempNumberList->number = temp;
-
-            //チェック
-            // printf("%lf  \n",temp);
-
 
             tempNumberList->NNext = (numbersSeries*)malloc(sizeof(numbersSeries));
             tempNumberList->NNext->max_sizeList = tempNumberList->max_sizeList; 
@@ -140,18 +141,14 @@ void StringToDoubleInStruct(char StringInFile[], lineLinkedList* lineList){
     free(tempNumberList->NNext);
     tempNumberList->NNext =  NULL;
     *(tempNumberList->max_sizeList) = countNumberForNumberList ;
-    // printf(" value Maxsize main : %u",*(tempNumberList->max_sizeList));
-    // printf("\nEnd\n");
 }
 void readToFile(lineLinkedList** A){
-    //check it't has same
-    // printf(" address of lineList = %d ", ((*A)->numbersList));
     
     *A = (lineLinkedList*)malloc(sizeof(lineLinkedList));
     lineLinkedList* tempS = *A;
     FILE *f;
     f = fopen("DAYSO.IN", "r");
-    char temp[50];
+    char temp[100];
     if(f == NULL){
         printf("Cannot open file !\n");
     }
@@ -193,8 +190,7 @@ void insertPartNumberList(numbersSeries** A, double Fnumber){
     int i =(int) (*((*A)->max_sizeList)/2);
     numbersSeries* B = (numbersSeries*)malloc(sizeof(numbersSeries));
     numbersSeries* tempNumberStruct = *A;
-//    printf("here");
-//    printf("\n%d ",*(tempNumberStruct->max_sizeList));
+    
    while(--i){
         tempNumberStruct = tempNumberStruct->NNext;
    }
@@ -231,4 +227,28 @@ double stringtoNumber(char str[]){
     }
     return number*sign/th_10;
 
+}
+void writeToFileS(lineLinkedList** B){
+    lineLinkedList* A = *B;
+    char* tempCharater;
+    FILE* f = fopen("RESULT1.OUT","w");
+    if(f == NULL){
+        printf("#----writing to file RESULT1.OUT failed---");
+        return;
+    }
+    char* charac;
+    while(A->NSNext != NULL){
+        numbersSeries* tempNumbersList = A->numbersList;
+        while(tempNumbersList != NULL){
+            char tempCharac[20];
+            sprintf(tempCharac, "%.6f", tempNumbersList->number);
+            strcat(tempCharac," ");
+            d_cArray(&charac,tempCharac);
+            tempNumbersList = tempNumbersList->NNext;
+        }
+        d_cArray(&charac,"\n");
+        A = A->NSNext;
+    }
+    fprintf(f,charac);
+    fclose(f);
 }
