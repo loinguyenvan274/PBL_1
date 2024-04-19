@@ -1,17 +1,14 @@
-<body>
-<div style="width: 50; float: left; margin-right: 5%;" id="block1">
-    <h2>
-    <img src="./src/dutlogo.png" alt="bkdn" style="max-width: 100%; height: auto;"> 
-    </h2>
+<div style="display: flex;">
+    <div style="width: 50%;">
+        <h2>Khối 1</h2>
+        <img src="./src/dutlogo.png"alt="Hình ảnh thứ nhất">
+    </div>
+    <div style="width: 50%;">
+        <h2>Khối 2</h2>
+        <img  src="./src/itfaculty.jpg"  alt="Hình ảnh thứ hai">
+    </div>
 </div>
 
-<!-- Khối 2 -->
-<div style="width: 50; float: left; margin-left: 5%;" id="block2">
-    <h2>
-    <img src="./src/itfaculty.jpg" alt="itFaculty" style="max-width: 100%; height: auto;">
-    </h2>
-</div>
-</body>
 #PBL_1
 - PBL1: COMPUTATIONAL PROGRAMMING
 - Topic : 305
