@@ -2,25 +2,28 @@
 #include <stdlib.h>
 #include <string.h>
 
-void d_cArray(char** array, char* character) {
+void d_cArray(char** array, char* character, int Size) {
     static int count_dArray = 0;
-    int characterLength = strlen(character);
     if (count_dArray == 0) {
-        count_dArray = characterLength + 1; // Bao gồm cả ký tự null kết thúc chuỗi
+        count_dArray = Size;
         *array = (char*)malloc(count_dArray * sizeof(char));
-        strcpy(*array, character); // Sao chép chuỗi character vào vùng nhớ mới
     } else {
-        int arrayLength = strlen(*array);
-        count_dArray += characterLength;
+        count_dArray += Size;
         *array = realloc(*array, count_dArray * sizeof(char));
-        memcpy(*array + arrayLength, character, characterLength + 1); // Sao chép chuỗi character vào cuối *array
     }
+    strcat(*array, character);
 }
 
 int main() {
-    char a[44] = "54";
-    // char *b = :
-    strcat(a,"4");
-    printf("%s",a);
+    char* b = NULL; // Khởi tạo con trỏ b với giá trị NULL
+    char a[] = "hello anh em ";
+    printf("%d\n",)
+    d_cArray(&b, a, sizeof(a));
+    printf("%s", b);
+    strcpy(a, "bach khoa");
+    d_cArray(&b, a, sizeof(a));
+    printf("%s", b);
+
+    free(b); // Giải phóng bộ nhớ sau khi không cần thiết nữa
     return 0;
 }
