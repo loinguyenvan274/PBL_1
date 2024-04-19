@@ -1,4 +1,6 @@
 #PBL_1
-- these is a PBL_1 project by Loi and Duc.
-- I learning how to use git .
-- I hope you lean code is a way head.
+-PBL1: COMPUTATIONAL PROGRAMMING
+-Topic : 305
+-Instructor: Pham Cong Thang
+-Implemented by: Nguyen Van Loi ~ 102230026
+                 Tran Anh Duc ~ 102230010
