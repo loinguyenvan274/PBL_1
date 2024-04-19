@@ -4,7 +4,6 @@
 </a>
 </p>
 <br>
-<<<<<<< HEAD
 
 # PBL_1
 - PBL_1: COMPUTATIONAL PROGRAMMING
@@ -19,7 +18,6 @@
 <p>
 <img src="./src/video.gif">
 </p>
-=======
 
 # PBL_1
 - PBL_1: Lập trình tính toán
@@ -56,5 +54,3 @@ làm tròn nếu M lẻ), hiển thị kết quả và lưu kết quả ra file 
 - File *RESULT1.OUT, RESULT2.OUT*.
 
 
-
->>>>>>> bbd5aa1 (changed readme)
