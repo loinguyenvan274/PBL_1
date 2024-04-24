@@ -8,7 +8,7 @@
 # PBL_1
 - PBL_1: Lập trình tính toán
 - Chủ đề : [305](./src/Danh%20sach%20de%20tai%20PBL_1.pdf)
-- Giáo viên hướng dẫn : Nguyễn Công Thắng
+- Giáo viên hướng dẫn : Phạm Công Thắng
 - Sinh viên thực hiện: 
   * Nguyễn Văn Lợi ~ 102230026
   * Trần Anh Đức ~ 102230010
